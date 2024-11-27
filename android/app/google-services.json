@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "313246574268",
+    "project_id": "pulseviz-95a61",
+    "storage_bucket": "pulseviz-95a61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313246574268:android:a420be8888df344f63d2b9",
+        "android_client_info": {
+          "package_name": "com.example.pulse_viz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZzhHIv29msIPEfDTcvCkoQUAAcAIlbqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
