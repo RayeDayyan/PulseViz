@@ -47,5 +47,8 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+        <string>We need access to your camera for scanning ECGs.</string>
+
 	</dict>
 </plist>

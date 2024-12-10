@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pulse_viz/camera_screen.dart';
 import 'package:pulse_viz/signup_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -35,6 +36,7 @@ class LoginScreenState extends State<LoginScreen> {
                 child: Text('Login Successful'),
               ),
             ));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>CameraScreen()));
 
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
