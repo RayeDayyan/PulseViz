@@ -15,7 +15,6 @@ class SignupScreenState extends State<SignupScreen>{
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController cnicController = TextEditingController();
-  TextEditingController ageController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passController = TextEditingController();
   TextEditingController confirmController = TextEditingController();
@@ -48,7 +47,6 @@ class SignupScreenState extends State<SignupScreen>{
           email:emailController.text.toString(),
           name: nameController.text.toString(),
           cnic: cnicController.text.toString(),
-          age: ageController.text.toString(),
           phone: phoneController.text.toString(),
           occupation: role,
           password: passController.text.toString());
@@ -180,28 +178,6 @@ class SignupScreenState extends State<SignupScreen>{
 
           SizedBox(height: 0.5.h,),
 
-          Text(
-            'Age',
-            style: TextStyle(
-              fontFamily: 'Poppins-Light',
-              fontSize: 18.sp,
-            ),
-          ),
-          TextField(
-            controller: ageController,
-            style: const TextStyle(
-              fontFamily: 'Poppins-Light',
-            ),
-            decoration: InputDecoration(
-                hintText: 'Age',
-                hintStyle:
-                TextStyle(fontFamily: 'Poppins-Light', fontSize: 14.sp),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )),
-          ),
-
-          SizedBox(height: 0.5.h,),
 
           Text(
             'Phone Number',

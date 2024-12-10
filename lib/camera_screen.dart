@@ -43,11 +43,22 @@ class CameraScreenState extends State<CameraScreen>{
     setState(() {});
   }
 
+  @override
+  void dispose() {
+    _cameraController.dispose();
+    Tflite.close();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        leading: Image.asset('assets/images/red_logo.png'),
+        backgroundColor: Colors.black,
+      ),
       body: _isModelLoaded?
       FutureBuilder<void>(
         future: _initializeControllerFuture,

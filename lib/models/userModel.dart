@@ -3,7 +3,6 @@ class UserModel {
   final String email;
   final String name;
   final String cnic;
-  final String age;
   final String phone;
   final String occupation;
   final String password;
@@ -13,7 +12,6 @@ class UserModel {
     required this.email,
     required this.name,
     required this.cnic,
-    required this.age,
     required this.phone,
     required this.occupation,
     required this.password
@@ -25,7 +23,6 @@ class UserModel {
         email: json['email'],
         name: json['name'],
         cnic: json['cnic'],
-        age: json['age'],
         phone: json['phone'],
         occupation: json['occupation'],
         password: json['password']);
@@ -37,7 +34,6 @@ class UserModel {
       'email':email,
       'name':name,
       'cnic':cnic,
-      'age':age,
       'phone':phone,
       'occupation':occupation,
       'password':password
