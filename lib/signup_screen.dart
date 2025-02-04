@@ -30,6 +30,7 @@ class SignupScreenState extends State<SignupScreen>{
   }
 
   void signUp() async {
+    //signing up the user when the email and pass are not empty,first authenticated through firebase and then on our backend database
     if (emailController.text.isNotEmpty && passController.text.isNotEmpty) {
       await auth.createUserWithEmailAndPassword(
           email: emailController.text.toString(),

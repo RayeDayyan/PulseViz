@@ -10,7 +10,7 @@ import 'firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(Duration(seconds: 2)); // Add a delay to showcase splash
+  // await Future.delayed(Duration(seconds: 2)); // Add a delay to showcase splash
 
 
   await Firebase.initializeApp(

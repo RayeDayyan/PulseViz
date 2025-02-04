@@ -8,15 +8,13 @@ class UserController {
 
   Future<bool> signUpUser(UserModel user) async{
     try{
-      print('before signup');
-      print(user.toJson());
+      //sending request to our node server for signup
       final response = await http.post(Uri.parse('$baseUrl/signUpUser'),
       headers: {'Content-type':'application/json'},
         body: jsonEncode(user.toJson())
       );
 
-      print('after signup');
-
+     //checking the api response to return either true or false
       if(response.statusCode==201){
         return true;
       }

@@ -10,6 +10,7 @@ class ModelController {
   final String baseUrl = 'http://10.0.2.2:5000/predict';
   bool? predictionResult;
 
+
   Future<String> pickAndSendImage() async {
     // Pick image from gallery
     XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -19,6 +20,7 @@ class ModelController {
       // Send image to Python API
       var response = await sendImageToApi(imageFile);
 
+      //return response depending on what we got from the api call,true for heartattack and false for normal heatbeat
       if (response != null) {
           predictionResult = response;
           if(predictionResult==true){
@@ -38,7 +40,7 @@ class ModelController {
   }
 
   Future<bool?> sendImageToApi(File imageFile) async {
-    var uri = Uri.parse(baseUrl);  // Replace with your API URL
+    var uri = Uri.parse(baseUrl);  // creating our Uri to send a multipart request
     var request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
 
@@ -46,6 +48,7 @@ class ModelController {
     try {
       var response = await request.send();
 
+      //on successful api hit and getting the response, handle what the api gives as result respectively
       if (response.statusCode == 200) {
         // Parse the response
         var responseData = await response.stream.bytesToString();

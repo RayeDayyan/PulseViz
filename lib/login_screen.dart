@@ -23,19 +23,20 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
   void login() async {
+    //if the email or password is empty do not try to login
     if (emailController.text.isNotEmpty && passController.text.isNotEmpty) {
       try {
         await auth.signInWithEmailAndPassword(
             email: emailController.text.toString(),
             password: passController.text.toString());
 
-        print('signin successful');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content:  Center(
                 child: Text('Login Successful'),
               ),
             ));
+        //change screen after successful login
         Navigator.push(context, MaterialPageRoute(builder: (context)=>CameraScreen()));
 
       } catch (e) {
@@ -45,7 +46,6 @@ class LoginScreenState extends State<LoginScreen> {
                 child: Text('Login Failed!'),
               ),
             ));
-        print('error occured');
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
