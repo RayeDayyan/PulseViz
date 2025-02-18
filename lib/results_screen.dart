@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
@@ -6,6 +5,8 @@ import 'package:pulse_viz/results_provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ResultsScreen extends ConsumerWidget{
+  const ResultsScreen({super.key});
+
   @override
   Widget build(BuildContext context,WidgetRef ref){
     String result = ref.read(resultsProvider.state).state;

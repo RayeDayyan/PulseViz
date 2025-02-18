@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/controllers/userConroller.dart';
 import 'package:pulse_viz/login_screen.dart';
@@ -7,6 +6,8 @@ import 'package:pulse_viz/models/userModel.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SignupScreen extends StatefulWidget{
+  const SignupScreen({super.key});
+
   @override
   State<SignupScreen> createState() => SignupScreenState();
 }
@@ -62,7 +63,7 @@ class SignupScreenState extends State<SignupScreen>{
               ),
             ));
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginScreen()));
+            context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
       }else{
         ScaffoldMessenger.of(context).showSnackBar(
@@ -76,7 +77,7 @@ class SignupScreenState extends State<SignupScreen>{
 
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Incomplete Credentials')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incomplete Credentials')));
     }
   }
 
@@ -215,7 +216,7 @@ class SignupScreenState extends State<SignupScreen>{
         height: 6.5.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30), // Rounded corners
-          color: Color(0xFF575252), // Background color
+          color: const Color(0xFF575252), // Background color
         ),
         child: Row(
           children: [
@@ -230,7 +231,7 @@ class SignupScreenState extends State<SignupScreen>{
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isDoctor ? Color(0xFFD61717) : Colors.transparent,
+                    color: isDoctor ? const Color(0xFFD61717) : Colors.transparent,
                     borderRadius: BorderRadius.circular(5.w),
                   ),
                   child: Text(
@@ -255,7 +256,7 @@ class SignupScreenState extends State<SignupScreen>{
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: !isDoctor ? Color(0xFFD61717) : Colors.transparent,
+                    color: !isDoctor ? const Color(0xFFD61717) : Colors.transparent,
                     borderRadius: BorderRadius.circular(5.w),),
                   child: Text(
                     'Nurse',
@@ -287,7 +288,7 @@ class SignupScreenState extends State<SignupScreen>{
               ),
               GestureDetector(
                 onTap: setVisibility,
-                child: Icon(Icons.remove_red_eye),
+                child: const Icon(Icons.remove_red_eye),
               )
             ],
           ),
@@ -342,12 +343,12 @@ class SignupScreenState extends State<SignupScreen>{
           SizedBox(
             height: 5.h,
           ),
-          Container(
+          SizedBox(
               height: 8.h,
               child: ElevatedButton(
                   onPressed: signUp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color((0xFFD61717)),
+                    backgroundColor: const Color((0xFFD61717)),
                   ),
                   child: Text(
                     'Signup',
@@ -356,7 +357,7 @@ class SignupScreenState extends State<SignupScreen>{
                       fontSize: 18.sp,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold,
-                      color: Color(0XFFEDF4F2),
+                      color: const Color(0XFFEDF4F2),
                     ),
                   ))),
 
@@ -376,14 +377,14 @@ class SignupScreenState extends State<SignupScreen>{
               GestureDetector(
                 onTap: (() => {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()))
+                      MaterialPageRoute(builder: (context) => const LoginScreen()))
                 }),
                 child: Text(
                   'Login Now !',
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14.sp,
-                      color: Color(0xFF31473A)),
+                      color: const Color(0xFF31473A)),
                 ),
               )
             ],

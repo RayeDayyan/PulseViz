@@ -34,10 +34,10 @@ class MyApp extends StatelessWidget {
         title: 'PulseViz',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFD61717)),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD61717)),
           useMaterial3: true,
         ),
-        home: user!=null?CameraScreen():LoginScreen(),
+        home: user!=null?const CameraScreen():const LoginScreen(),
       );
     });
   }

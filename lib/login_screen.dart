@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/camera_screen.dart';
 import 'package:pulse_viz/signup_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => LoginScreenState();
 }
@@ -37,7 +38,7 @@ class LoginScreenState extends State<LoginScreen> {
               ),
             ));
         //change screen after successful login
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>CameraScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const CameraScreen()));
 
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +118,7 @@ class LoginScreenState extends State<LoginScreen> {
               ),
               GestureDetector(
                 onTap: setVisibility,
-                child: Icon(Icons.remove_red_eye),
+                child: const Icon(Icons.remove_red_eye),
               )
             ],
           ),
@@ -138,12 +139,12 @@ class LoginScreenState extends State<LoginScreen> {
 
           SizedBox(height: 5.h,),
 
-          Container(
+          SizedBox(
               height: 8.h,
               child: ElevatedButton(
                   onPressed: login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFD61717),
+                    backgroundColor: const Color(0xFFD61717),
                   ),
                   child: Text(
                     'Login',
@@ -152,7 +153,7 @@ class LoginScreenState extends State<LoginScreen> {
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
-                      color: Color(0XFFEDF4F2),
+                      color: const Color(0XFFEDF4F2),
                     ),
                   ))),
 
@@ -171,14 +172,14 @@ class LoginScreenState extends State<LoginScreen> {
             children: [
               GestureDetector(
                 onTap: (() => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupScreen())),
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignupScreen())),
                     }),
                 child: Text(
-                  'Crate one now !',
+                  'Create one now !',
                   style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 16.sp,
-                      color: Color(0xFF31473A)),
+                      color: const Color(0xFF31473A)),
                 ),
               )
             ],

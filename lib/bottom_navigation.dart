@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulse_viz/camera_screen.dart';
@@ -14,11 +13,13 @@ class BottomNavigation extends ConsumerWidget{
   final modelController = ModelController();
   final auth = FirebaseAuth.instance;
 
+  BottomNavigation({super.key});
+
   @override
   Widget build(BuildContext context,WidgetRef ref){
     return Container(
       height: 7.h,
-      color: Color(0xFFD61717),
+      color: const Color(0xFFD61717),
       child: Row(
         children: [
           SizedBox(
@@ -28,7 +29,7 @@ class BottomNavigation extends ConsumerWidget{
             String result = await modelController.pickAndSendImage();
             if(result != 'No Image Selected'){
               ref.read(resultsProvider.state).state = result;
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultsScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const ResultsScreen()));
             }
 
           },
@@ -37,7 +38,7 @@ class BottomNavigation extends ConsumerWidget{
             width: 17.w,
           ),
           IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>CameraScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const CameraScreen()));
           },
               icon: Icon(Icons.camera_alt,color: Colors.white,size: 5.h,)),
           SizedBox(
@@ -45,7 +46,7 @@ class BottomNavigation extends ConsumerWidget{
           ),
           IconButton(onPressed: (){
               auth.signOut();
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
 
           },
               icon: Icon(Icons.settings,color: Colors.white,size: 5.h,))
