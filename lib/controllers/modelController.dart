@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class ModelController {
 
   final imagePicker = ImagePicker();
-  final String baseUrl = 'http://10.0.2.2:5000/predict';
+  final String baseUrl = 'http://13.51.157.252:5000/predict';
   bool? predictionResult;
 
 
