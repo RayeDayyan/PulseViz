@@ -7,3 +7,5 @@ final modelController = ModelController();
 final resultsProvider = StateProvider<String>((ref){
   return 'Nothing yet';
 });
+
+final isLoadingProvider = StateProvider<bool>((ref) => false);
