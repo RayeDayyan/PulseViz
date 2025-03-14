@@ -1,29 +1,27 @@
-import 'dart:typed_data';
-
-import 'package:image/image.dart' as img;
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
-import 'package:tflite_flutter/tflite_flutter.dart'; 
+import 'package:pulse_viz/controllers/modelController.dart'; // Import the model controller file
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
   @override
-  State<CameraScreen> createState() => CameraScreenState();
+  State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class CameraScreenState extends State<CameraScreen> {
+class _CameraScreenState extends State<CameraScreen> {
   CameraController? _cameraController;
-  Future<void>? _initializeControllerFuture;
-  Interpreter? _interpreter; 
+  late Future<void> _initializeControllerFuture;
   String _scanResult = "";
+  final modelController = ModelController(); // ModelController instance
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
-    _loadModel(); 
+    _initializeControllerFuture = _initializeCamera();
   }
 
   Future<void> _initializeCamera() async {
@@ -33,81 +31,51 @@ class CameraScreenState extends State<CameraScreen> {
         throw Exception("No cameras found");
       }
       final camera = cameras.first;
-      _cameraController = CameraController(camera, ResolutionPreset.high);
-      _initializeControllerFuture = _cameraController?.initialize();
-      await _initializeControllerFuture;
-      setState(() {});
+      _cameraController = CameraController(
+        camera,
+        ResolutionPreset.high,
+        enableAudio: false,
+      );
+
+      await _cameraController!.initialize();
+      await _cameraController?.lockCaptureOrientation(); 
+
+      if (mounted) {
+        setState(() {}); 
+      }
     } catch (e) {
       print("Camera initialization error: $e");
     }
   }
 
-  Future<void> _loadModel() async 
-  { 
+  Future<void> _captureAndProcessImage(WidgetRef ref) async {
     try {
-      _interpreter = await Interpreter.fromAsset("assets/model.tflite");
-      print("Model loaded successfully");
-    } catch (e) {
-      print("Error loading model: $e");
-    }
-  }
-
-  Future<void> _captureAndProcessImage() async{
-     try
-     {
-       if(_cameraController == null || !_cameraController!.value.isInitialized)
-       {
+      if (_cameraController == null || !_cameraController!.value.isInitialized) {
         print("Camera isn't initialized");
         return;
-       }
+      }
 
-       final XFile imageFile = await _cameraController!.takePicture();
-       final imageBytes = await imageFile.readAsBytes();
-       print("Image captured successfully.");
+      final XFile imageFile = await _cameraController!.takePicture();
+      print("Image captured successfully: ${imageFile.path}");
 
-       var input = _preprocessImage(imageBytes);
-       var output = List.filled(1, 0.0).reshape([1, 1]); 
+      File image = File(imageFile.path);
+      print("Checking if file exists: ${image.existsSync()}"); // Debugging      
+      // Call API using ModelController
+      String result = await modelController.captureAndSendImage(image, ref, context);
 
-       _interpreter?.run(input, output);
-       print("Inference result:  $output");
-       setState(() {
-         _scanResult = output.toString();
-       });
-     }
-     catch(error)
-     {
-        print("Error while capturing and processing image : $error");
-     }
-  }
+      setState(() {
+        _scanResult = result;
+      });
 
-Uint8List _preprocessImage(Uint8List imageBytes) {
-  img.Image image = img.decodeImage(imageBytes)!;
-  img.Image resizedImage = img.copyResize(image, width: 224, height: 224);
-
-  var buffer = Float32List(224 * 224 * 3);
-  for (int i = 0; i < 224; i++) {
-    for (int j = 0; j < 224; j++) {
-      img.Pixel pixel = resizedImage.getPixelSafe(j, i); 
-      
-      int r = pixel.r.toInt(); 
-      int g = pixel.g.toInt(); 
-      int b = pixel.b.toInt();
-
-      buffer[i * 224 * 3 + j * 3] = r / 255.0;
-      buffer[i * 224 * 3 + j * 3 + 1] = g / 255.0;
-      buffer[i * 224 * 3 + j * 3 + 2] = b / 255.0;
+      print("API Result: $_scanResult");
+    } catch (error) {
+      print("Error while capturing and processing image: $error");
     }
   }
-
-  return buffer.buffer.asUint8List();
-}
-
-
 
   @override
   void dispose() {
     _cameraController?.dispose();
-    _interpreter?.close(); 
     super.dispose();
   }
 
@@ -122,26 +90,144 @@ Uint8List _preprocessImage(Uint8List imageBytes) {
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.done && _cameraController != null) {
             return Stack(
               children: [
-                Positioned.fill(child: CameraPreview(_cameraController!)),
+                // ✅ Camera Preview
+                Positioned.fill(
+                  child: RotatedBox(
+                    quarterTurns: 0, // Portrait Mode
+                    child: CameraPreview(_cameraController!),
+                  ),
+                ),
 
+                // ✅ Overlay Instructions
                 Positioned(
-                  bottom : 20,
-                  left : MediaQuery.of(context).size.width / 2 - 30,
-                  child: FloatingActionButton(
-                    onPressed: _captureAndProcessImage,
-                    backgroundColor: Colors.redAccent,
-                    child: const Icon(Icons.camera),
-                  )
+                  top: 50,
+                  left: 20,
+                  right: 20,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Keep ECG strip within the lines",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Avoid glare and shadows for best results",
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+
+Positioned(
+  top: MediaQuery.of(context).size.height * 0.15, // Lowered to center better
+  left: 20,
+  right: 20,
+  child: SizedBox(
+    height: MediaQuery.of(context).size.height * 0.65, // Increased height
+    width: MediaQuery.of(context).size.width * 0.9, // Wide enough for ECG images
+    child: Stack(
+      children: [
+        // Top-Left Corner
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Colors.red, width: 4),
+                left: BorderSide(color: Colors.red, width: 4),
+              ),
+            ),
+          ),
+        ),
+        // Top-Right Corner
+        Positioned(
+          top: 0,
+          right: 0,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Colors.red, width: 4),
+                right: BorderSide(color: Colors.red, width: 4),
+              ),
+            ),
+          ),
+        ),
+        // Bottom-Left Corner
+        Positioned(
+          bottom: 0,
+          left: 0,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.red, width: 4),
+                left: BorderSide(color: Colors.red, width: 4),
+              ),
+            ),
+          ),
+        ),
+        // Bottom-Right Corner
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.red, width: 4),
+                right: BorderSide(color: Colors.red, width: 4),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+
+
+
+                // ✅ Capture Button
+                Positioned(
+                  bottom: 20,
+                  left: MediaQuery.of(context).size.width / 2 - 30,
+                  child: Consumer(
+                    builder: (context, ref, child) => FloatingActionButton(
+                      onPressed: () => _captureAndProcessImage(ref),
+                      backgroundColor: Colors.redAccent,
+                      child: const Icon(Icons.camera),
+                    ),
+                  ),
+                ),
+
+                // ✅ Display API Result
+                Positioned(
+                  bottom: 100,
+                  left: 20,
+                  child: Text(
+                    _scanResult,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
               ],
             );
           } else if (snapshot.hasError) {
             return Center(
               child: Text(
-                "Error: ${snapshot.error}",
+                "Camera Error: ${snapshot.error}",
                 style: const TextStyle(color: Colors.white),
               ),
             );
