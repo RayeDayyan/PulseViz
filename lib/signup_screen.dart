@@ -4,6 +4,9 @@ import 'package:pulse_viz/controllers/userConroller.dart';
 import 'package:pulse_viz/login_screen.dart';
 import 'package:pulse_viz/models/userModel.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:pulse_viz/helpers/EncryptionHelper.dart';
 
 class SignupScreen extends StatefulWidget{
   const SignupScreen({super.key});
@@ -22,6 +25,13 @@ class SignupScreenState extends State<SignupScreen>{
   final userController = UserController();
   bool isDoctor = true;
   final auth = FirebaseAuth.instance;
+
+  String hashPassword(String Password)
+  {
+    var bytes = utf8.encode(Password);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
+  }
 
   bool visibility = true;
   void setVisibility() {
@@ -44,14 +54,16 @@ class SignupScreenState extends State<SignupScreen>{
         role='Nurse';
       }
 
+      String hashedPassword = hashPassword(passController.text.toString());
+
       final user = UserModel(
           uid: uid,
           email:emailController.text.toString(),
           name: nameController.text.toString(),
-          cnic: cnicController.text.toString(),
-          phone: phoneController.text.toString(),
+          cnic: EncryptionHelper.encryptData(cnicController.text.toString()), // Encrypt CNIC
+          phone: EncryptionHelper.encryptData(phoneController.text.toString()), // Encrypt Phone
           occupation: role,
-          password: passController.text.toString());
+          password: hashedPassword);
 
       final result= await userController.signUpUser(user);
 
