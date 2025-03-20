@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
 import 'package:pulse_viz/results_provider.dart';
+import 'package:pulse_viz/add_patient.dart'; // add
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ResultsScreen extends ConsumerWidget {
@@ -98,6 +99,34 @@ Widget build(BuildContext context, WidgetRef ref) {
                               ),
                   ),
                 ),
+
+                  const SizedBox(height: 20),
+                                  // Next Button
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddPatientScreen(
+                            imagePath: imagePath,
+                            result: result,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 2.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3.w),
+                      ),
+                    ),
+                    child: Text(
+                      "Next",
+                      style: TextStyle(fontSize: 16.sp, color: Colors.white),
+                    ),
+                  ),
               ],
             ),
     ),

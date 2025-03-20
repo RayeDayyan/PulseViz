@@ -40,7 +40,65 @@ class SignupScreenState extends State<SignupScreen>{
     });
   }
 
+  void showError(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message, style: TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+  );
+}
+
+void showSuccess(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message, style: TextStyle(color: Colors.white)), backgroundColor: Colors.green),
+  );
+}
+
   void signUp() async {
+
+    String email = emailController.text.trim();
+    String password = passController.text.trim();
+    String confirmPassword = confirmController.text.trim();
+    String cnic = cnicController.text.trim();
+    String phone = phoneController.text.trim();
+    String name = nameController.text.trim();
+
+    //checks
+    if(email.isEmpty || password.isEmpty || confirmPassword.isEmpty || cnic.isEmpty || phone.isEmpty || name.isEmpty)
+    {
+      showError('Please fill in the required fields.');
+      return;  
+    }
+
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email)) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Invalid email format'),
+    ));
+    return; // Stops execution if email is invalid
+  }
+
+    if(!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{6,}$').hasMatch(password))
+    {
+      showError('Password must be atleast 6 characters and include uppercase, lowercase, number and a special character.');
+      return;
+    }
+
+    if(password != confirmPassword)
+    {
+      showError('Passwords do not match.');
+      return;
+    }
+
+    if(!RegExp(r'^\d{13}$').hasMatch(cnic))
+    {
+      showError('Invalid CNIC. It must be 13 digits.');
+      return;
+    }
+
+    if(!RegExp(r'^03\d{9}$').hasMatch(phone))
+    {
+      showError('Invalid phone number. It must start with 03 and be 11 digits.');
+      return;
+    }
+
     //signing up the user when the email and pass are not empty,first authenticated through firebase and then on our backend database
     if (emailController.text.isNotEmpty && passController.text.isNotEmpty) {
       await auth.createUserWithEmailAndPassword(

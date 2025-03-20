@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
-import 'package:pulse_viz/controllers/modelController.dart'; // Import the model controller file
+import 'package:pulse_viz/controllers/modelController.dart';
+import 'package:pulse_viz/search_patient.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _CameraScreenState extends State<CameraScreen> {
   CameraController? _cameraController;
   late Future<void> _initializeControllerFuture;
   String _scanResult = "";
-  final modelController = ModelController(); // ModelController instance
+  final modelController = ModelController();
 
   @override
   void initState() {
@@ -27,22 +28,17 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> _initializeCamera() async {
     try {
       final cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        throw Exception("No cameras found");
-      }
-      final camera = cameras.first;
+      if (cameras.isEmpty) throw Exception("No cameras found");
+      
       _cameraController = CameraController(
-        camera,
+        cameras.first,
         ResolutionPreset.high,
         enableAudio: false,
       );
-
+      
       await _cameraController!.initialize();
-      await _cameraController?.lockCaptureOrientation(); 
-
-      if (mounted) {
-        setState(() {}); 
-      }
+      await _cameraController?.lockCaptureOrientation();
+      if (mounted) setState(() {});
     } catch (e) {
       print("Camera initialization error: $e");
     }
@@ -56,18 +52,12 @@ class _CameraScreenState extends State<CameraScreen> {
       }
 
       final XFile imageFile = await _cameraController!.takePicture();
-      print("Image captured successfully: ${imageFile.path}");
-
       File image = File(imageFile.path);
-      print("Checking if file exists: ${image.existsSync()}"); // Debugging      
-      // Call API using ModelController
       String result = await modelController.captureAndSendImage(image, ref, context);
 
       setState(() {
         _scanResult = result;
       });
-
-      print("API Result: $_scanResult");
     } catch (error) {
       print("Error while capturing and processing image: $error");
     }
@@ -86,6 +76,15 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         leading: Image.asset('assets/images/red_logo.png'),
         backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchPatientScreen()),
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
@@ -93,29 +92,30 @@ class _CameraScreenState extends State<CameraScreen> {
           if (snapshot.connectionState == ConnectionState.done && _cameraController != null) {
             return Stack(
               children: [
-                // ✅ Camera Preview
+                Positioned.fill(child: CameraPreview(_cameraController!)),
+
+                /// 🟢 Frame Overlay
                 Positioned.fill(
-                  child: RotatedBox(
-                    quarterTurns: 0, // Portrait Mode
-                    child: CameraPreview(_cameraController!),
+                  child: CustomPaint(
+                    painter: FramePainter(),
                   ),
                 ),
 
-                // ✅ Overlay Instructions
+                /// 🟡 Instructions
                 Positioned(
-                  top: 50,
+                  top: 10,
                   left: 20,
                   right: 20,
                   child: Column(
                     children: [
                       Text(
-                        "Keep ECG strip within the lines",
+                        "Keep ECG paper inside the frame",
                         style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 2),
                       Text(
-                        "Avoid glare and shadows for best results",
+                        "Ensure good lighting & avoid glare",
                         style: TextStyle(color: Colors.white70, fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
@@ -123,84 +123,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
                 ),
 
-Positioned(
-  top: MediaQuery.of(context).size.height * 0.15, // Lowered to center better
-  left: 20,
-  right: 20,
-  child: SizedBox(
-    height: MediaQuery.of(context).size.height * 0.65, // Increased height
-    width: MediaQuery.of(context).size.width * 0.9, // Wide enough for ECG images
-    child: Stack(
-      children: [
-        // Top-Left Corner
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Colors.red, width: 4),
-                left: BorderSide(color: Colors.red, width: 4),
-              ),
-            ),
-          ),
-        ),
-        // Top-Right Corner
-        Positioned(
-          top: 0,
-          right: 0,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Colors.red, width: 4),
-                right: BorderSide(color: Colors.red, width: 4),
-              ),
-            ),
-          ),
-        ),
-        // Bottom-Left Corner
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.red, width: 4),
-                left: BorderSide(color: Colors.red, width: 4),
-              ),
-            ),
-          ),
-        ),
-        // Bottom-Right Corner
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.red, width: 4),
-                right: BorderSide(color: Colors.red, width: 4),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
-
-
-
-                // ✅ Capture Button
+                /// 🔴 Capture Button
                 Positioned(
                   bottom: 20,
                   left: MediaQuery.of(context).size.width / 2 - 30,
@@ -208,18 +131,18 @@ Positioned(
                     builder: (context, ref, child) => FloatingActionButton(
                       onPressed: () => _captureAndProcessImage(ref),
                       backgroundColor: Colors.redAccent,
-                      child: const Icon(Icons.camera),
+                      child: Icon(Icons.camera),
                     ),
                   ),
                 ),
 
-                // ✅ Display API Result
+                /// 🔵 Scan Result Display
                 Positioned(
                   bottom: 100,
                   left: 20,
                   child: Text(
                     _scanResult,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
               ],
@@ -228,15 +151,59 @@ Positioned(
             return Center(
               child: Text(
                 "Camera Error: ${snapshot.error}",
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white),
               ),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
       bottomNavigationBar: BottomNavigation(),
     );
   }
+}
+
+/// 🎨 Custom Painter for Open Frame with Corner Edges
+class FramePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.redAccent
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+
+    final double frameWidth = size.width * 0.9; // Max 80% of screen width
+    final double frameHeight = size.height * 0.85; // Max 50% of screen height
+    final double left = (size.width - frameWidth) / 2;
+    final double top = (size.height - frameHeight) / 2;
+    final double cornerLength = 40; // Length of corner lines
+
+    /// Draw corners instead of full rectangle
+    final Path path = Path()
+      // Top Left
+      ..moveTo(left, top + cornerLength)
+      ..lineTo(left, top)
+      ..lineTo(left + cornerLength, top)
+
+      // Top Right
+      ..moveTo(left + frameWidth - cornerLength, top)
+      ..lineTo(left + frameWidth, top)
+      ..lineTo(left + frameWidth, top + cornerLength)
+
+      // Bottom Left
+      ..moveTo(left, top + frameHeight - cornerLength)
+      ..lineTo(left, top + frameHeight)
+      ..lineTo(left + cornerLength, top + frameHeight)
+
+      // Bottom Right
+      ..moveTo(left + frameWidth - cornerLength, top + frameHeight)
+      ..lineTo(left + frameWidth, top + frameHeight)
+      ..lineTo(left + frameWidth, top + frameHeight - cornerLength);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
