@@ -3,6 +3,8 @@ import '../controllers/patientController.dart';
 import '../models/patientReport.dart';
 
 class SearchPatientScreen extends StatefulWidget {
+  const SearchPatientScreen({super.key});
+
   @override
   _SearchPatientScreenState createState() => _SearchPatientScreenState();
 }
@@ -13,18 +15,43 @@ class _SearchPatientScreenState extends State<SearchPatientScreen> {
   bool _isLoading = false;
 
   void _searchPatient() async {
-    setState(() => _isLoading = true);
+  setState(() => _isLoading = true);
 
-    String cnic = _cnicController.text.trim();
-    List<PatientReport> reports = await DatabaseService().getPatientReportsByCNIC(cnic);
+  String cnic = _cnicController.text.trim();
+  DatabaseService dbService = DatabaseService();
 
+  // ✅ Check if CNIC exists in the database before fetching reports
+  bool cnicExists = await dbService.checkIfCnicExists(cnic);
+
+  if (!cnicExists) {
     if (mounted) {
       setState(() {
-        _patientReports = reports;
+        _patientReports = []; // Clear previous results
         _isLoading = false;
       });
+
+      // Show error message if CNIC is not found
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("❌ CNIC not found! Please enter a valid CNIC."),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
+    return;
   }
+
+  // ✅ If CNIC exists, fetch reports
+  List<PatientReport> reports = await dbService.getPatientReportsByCNIC(cnic);
+
+  if (mounted) {
+    setState(() {
+      _patientReports = reports;
+      _isLoading = false;
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

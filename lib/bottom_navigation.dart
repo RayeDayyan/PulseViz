@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pulse_viz/camera_screen.dart';
 import 'package:pulse_viz/controllers/modelController.dart';
 import 'package:pulse_viz/login_screen.dart';
@@ -8,12 +9,16 @@ import 'package:pulse_viz/results_provider.dart';
 import 'package:pulse_viz/results_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:pulse_viz/loading_screen.dart';
+import 'dart:io';
+
 
 class BottomNavigation extends ConsumerWidget {
   final modelController = ModelController();
   final auth = FirebaseAuth.instance;
-
+  final ImagePicker imagePicker = ImagePicker();
   BottomNavigation({super.key});
+  String? result;
+  String imagePath = '';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,11 +43,18 @@ class BottomNavigation extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => const LoadingScreen()),
           );
 
-          String result = await modelController.pickAndSendImage(ref, context);
+          XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+
+          if (image != null) {
+              imagePath = image.path;
+              File imageFile = File(imagePath);
+              result = await modelController.pickAndSendImage(ref, context);
+
+          }
           ref.read(isLoadingProvider.state).state = false; // Stop Loading
 
           if (result != 'No Image Selected') {
-            ref.read(resultsProvider.state).state = result;
+            ref.read(resultsProvider.state).state = result!;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pulse_viz/controllers/userConroller.dart';
+import 'package:pulse_viz/controllers/userController.dart';
 import 'package:pulse_viz/login_screen.dart';
 import 'package:pulse_viz/models/userModel.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -52,104 +52,77 @@ void showSuccess(String message) {
   );
 }
 
-  void signUp() async {
+void signUp() async {
+  String email = emailController.text.trim();
+  String password = passController.text.trim();
+  String confirmPassword = confirmController.text.trim();
+  String cnic = cnicController.text.trim();
+  String phone = phoneController.text.trim();
+  String name = nameController.text.trim();
 
-    String email = emailController.text.trim();
-    String password = passController.text.trim();
-    String confirmPassword = confirmController.text.trim();
-    String cnic = cnicController.text.trim();
-    String phone = phoneController.text.trim();
-    String name = nameController.text.trim();
-
-    //checks
-    if(email.isEmpty || password.isEmpty || confirmPassword.isEmpty || cnic.isEmpty || phone.isEmpty || name.isEmpty)
-    {
-      showError('Please fill in the required fields.');
-      return;  
-    }
-
-    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email)) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Invalid email format'),
-    ));
-    return; // Stops execution if email is invalid
+  if(email.isEmpty || password.isEmpty || confirmPassword.isEmpty || cnic.isEmpty || phone.isEmpty || name.isEmpty) {
+    showError('Please fill in the required fields.');
+    return;  
   }
 
-    if(!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{6,}$').hasMatch(password))
-    {
-      showError('Password must be atleast 6 characters and include uppercase, lowercase, number and a special character.');
-      return;
-    }
-
-    if(password != confirmPassword)
-    {
-      showError('Passwords do not match.');
-      return;
-    }
-
-    if(!RegExp(r'^\d{13}$').hasMatch(cnic))
-    {
-      showError('Invalid CNIC. It must be 13 digits.');
-      return;
-    }
-
-    if(!RegExp(r'^03\d{9}$').hasMatch(phone))
-    {
-      showError('Invalid phone number. It must start with 03 and be 11 digits.');
-      return;
-    }
-
-    //signing up the user when the email and pass are not empty,first authenticated through firebase and then on our backend database
-    if (emailController.text.isNotEmpty && passController.text.isNotEmpty) {
-      await auth.createUserWithEmailAndPassword(
-          email: emailController.text.toString(),
-          password: passController.text.toString());
-
-      String uid = auth.currentUser!.uid;
-
-      String role = 'Doctor';
-      if(isDoctor==false){
-        role='Nurse';
-      }
-
-      String hashedPassword = hashPassword(passController.text.toString());
-
-      final user = UserModel(
-          uid: uid,
-          email:emailController.text.toString(),
-          name: nameController.text.toString(),
-          cnic: EncryptionHelper.encryptData(cnicController.text.toString()), // Encrypt CNIC
-          phone: EncryptionHelper.encryptData(phoneController.text.toString()), // Encrypt Phone
-          occupation: role,
-          password: hashedPassword);
-
-      final result= await userController.signUpUser(user);
-
-      if(result==true){
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:  Center(
-                child: Text('Signup Successful'),
-              ),
-            ));
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-
-      }else{
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:  Center(
-                child: Text('Signup failed'),
-              ),
-            ));
-
-      }
-
-    }
-    else{
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Incomplete Credentials')));
-    }
+  if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email)) {
+    showError('Invalid email format');
+    return;
   }
+
+  if(!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{6,}$').hasMatch(password)) {
+    showError('Password must be at least 6 characters and include uppercase, lowercase, number, and a special character.');
+    return;
+  }
+
+  if(password != confirmPassword) {
+    showError('Passwords do not match.');
+    return;
+  }
+
+  if(!RegExp(r'^\d{13}$').hasMatch(cnic)) {
+    showError('Invalid CNIC. It must be 13 digits.');
+    return;
+  }
+
+  if(!RegExp(r'^03\d{9}$').hasMatch(phone)) {
+    showError('Invalid phone number. It must start with 03 and be 11 digits.');
+    return;
+  }
+
+  try {
+    await auth.createUserWithEmailAndPassword(email: email, password: password);
+    String uid = auth.currentUser!.uid;
+
+    String role = isDoctor ? 'Doctor' : 'Nurse';
+    String hashedPassword = hashPassword(password);
+
+    // Await encryption before passing it to UserModel
+    String encryptedPhone = await EncryptionHelper.encryptData(phone);
+
+    final user = UserModel(
+      uid: uid,
+      email: email,
+      name: name,
+      cnic: cnic, 
+      phone: encryptedPhone, // Encrypted Phone
+      occupation: role,
+      password: hashedPassword,
+    );
+
+    final result = await userController.signUpUser(user);
+
+    if (result == true) {
+      showSuccess('Signup Successful');
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    } else {
+      showError('Signup failed');
+    }
+  } catch (e) {
+    showError('Error: ${e.toString()}');
+  }
+}
+
 
   @override
   Widget build(BuildContext context){

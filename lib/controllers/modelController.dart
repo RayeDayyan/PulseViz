@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:pulse_viz/controllers/report_provider.dart';
+import 'package:pulse_viz/models/report_model.dart';
 import 'package:pulse_viz/results_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ class ModelController {
   bool isLoading = false;
   final imagePicker = ImagePicker();
   final String baseUrl = 'http://13.51.157.252:5000/predict';
+  final String generationURL = 'http://13.51.157.252:5001/analyze';
   bool? predictionResult;
   String imagePath = '';
 
@@ -28,7 +31,7 @@ class ModelController {
         ref.read(isLoadingProvider.notifier).state = false;
         return 'Error: File does not exist';
       }
-
+      ref.read(imageProvider.state).state = imageFile;
       var response = await sendImageToApi(imageFile);
       ref.read(isLoadingProvider.notifier).state = false;
 
@@ -53,6 +56,39 @@ class ModelController {
       return 'No Image Selected';
     }
   }
+
+Future<Report?> getGenerationResults(File image)async{
+  try{
+var uri = Uri.parse(generationURL);
+    var request = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath('file', image.path));
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.bytesToString();
+        print("🔄 API Raw Response: $responseData");
+        var result = jsonDecode(responseData);
+        final report = Report.fromJson(result);
+        print(report);
+        return report;
+      }  else {
+        var responseData = await response.stream.bytesToString();
+        print("🔄 API Raw Response: $responseData");
+        var result = jsonDecode(responseData);
+
+        
+
+        print(result);
+      print("❌ Error: API responded with status ${response.statusCode}");
+      return null;
+    }
+ 
+  }catch(e){
+    print('error occured');
+    return null;
+  }
+}
 
 Future<String> captureAndSendImage(File imageFile, WidgetRef ref, BuildContext context) async {
   print("📸 Captured Image Path: ${imageFile.path}");

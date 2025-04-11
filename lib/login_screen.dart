@@ -28,8 +28,8 @@ class LoginScreenState extends State<LoginScreen> {
     if (emailController.text.isNotEmpty && passController.text.isNotEmpty) {
       try {
         await auth.signInWithEmailAndPassword(
-            email: emailController.text.toString(),
-            password: passController.text.toString());
+          email: emailController.text.trim(), 
+          password: passController.text.trim(),);
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

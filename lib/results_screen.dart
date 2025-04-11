@@ -1,11 +1,11 @@
 import 'dart:io';
-
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
+import 'package:pulse_viz/controllers/report_provider.dart';
 import 'package:pulse_viz/results_provider.dart';
 import 'package:pulse_viz/add_patient.dart'; // add
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ResultsScreen extends ConsumerWidget {
   final String imagePath; // Add this line to receive the image path
@@ -15,17 +15,18 @@ class ResultsScreen extends ConsumerWidget {
   @override
 Widget build(BuildContext context, WidgetRef ref) {
   String result = ref.watch(resultsProvider);
-  bool isLoading = ref.watch(isLoadingProvider); // Watch loading state
-
+  bool isLoading = ref.watch(isLoadingProvider);
+ 
   return Scaffold(
     appBar: AppBar(
       leading: Image.asset('assets/images/red_logo.png'),
     ),
-    body: Center(
+    body: ref.watch(reportProvider).when(data: (report){
+      return Center(
       child: isLoading
           ? const CircularProgressIndicator() // Show loading spinner
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          : ListView(
+//              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 imagePath.isNotEmpty
                     ? AnimatedContainer(
@@ -41,66 +42,83 @@ Widget build(BuildContext context, WidgetRef ref) {
                       )
                     : const Text("No Image Selected"),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 3.h),
 
-                AnimatedContainer(
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeInOut,
-                  width: 75.w,
-                  height: 30.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(3.w),
-                  ),
-                  transform: Matrix4.identity()..scale(1.1),
-                  child: Center(
-                    child: result == 'HeartAttack'
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Results : Positive',
-                                style: TextStyle(fontSize: 16.sp),
-                              ),
-                              Text(
-                                'Our model predicted Heart Attack!',
-                                style: TextStyle(fontSize: 16.sp),
-                              ),
-                            ],
-                          )
-                        : result == 'Normal'
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Results : Negative',
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                  Text(
-                                    'Our model predicted Normal Heartbeat!',
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Error: Unexpected result value!',
-                                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
-                                  ),
-                                  Text(
-                                    'Received: $result', 
-                                    style: TextStyle(fontSize: 14.sp),
-                                  ),
-                                ],
-                              ),
-                  ),
-                ),
+                // AnimatedContainer(
+                //   duration: const Duration(seconds: 1),
+                //   curve: Curves.easeInOut,
+                //   width: 75.w,
+                //   height: 30.h,
+                //   decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.black),
+                //     borderRadius: BorderRadius.circular(3.w),
+                //   ),
+                //   transform: Matrix4.identity()..scale(1.1),
+                //   child: Center(
+                //     child: result == 'HeartAttack'
+                //         ? ListView(
+                //             //mainAxisAlignment: MainAxisAlignment.center,
+                //             //crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Text(
+                //                 'Results : Positive',
+                //                 style: TextStyle(fontSize: 16.sp),
+                //               ),
+                //               Text(
+                //                 'Our model predicted Heart Attack!',
+                //                 style: TextStyle(fontSize: 16.sp),
+                //               ),
+                //             ],
+                //           )
+                //         : result == 'Normal'
+                //             ? ListView(
+                //                 //mainAxisAlignment: MainAxisAlignment.center,
+                //                 //crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Text(
+                //                     'Results : Negative',
+                //                     style: TextStyle(fontSize: 16.sp),
+                //                   ),
+                //                   Text(
+                //                     'Our model predicted Normal Heartbeat!',
+                //                     style: TextStyle(fontSize: 16.sp),
+                //                   ),
+                //                 ],
+                //               )
+                //             : Column(
+                //                 mainAxisAlignment: MainAxisAlignment.center,
+                //                 children: [
+                //                   Text(
+                //                     'Error: Unexpected result value!',
+                //                     style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                //                   ),
+                //                   Text(
+                //                     'Received: $result', 
+                //                     style: TextStyle(fontSize: 14.sp),
+                //                   ),
+                //                 ],
 
-                  const SizedBox(height: 20),
+
+                //               ),
+
+
+                //   ),
+                // ),
+
+
+                Text('Result'),
+
+
+                Text('Heart Condition : ${report!.heartCondition}'),
+                Text('Conduction Abnormality :${report.conductionAbnormality}'),
+
+                Text('Hypertrophy : ${report.hypertrophy}'),
+                Text('Rythm : ${report.rhythm}'),
+                Text('Heart Rate : ${report.heartRate.toString()}'),
+                Text('QRS Width : ${report.qrsWidth.toString()}'),
+
+
+                  SizedBox(height: 7.h),
                                   // Next Button
                   ElevatedButton(
                     onPressed: () {
@@ -115,7 +133,7 @@ Widget build(BuildContext context, WidgetRef ref) {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.red,
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.w, vertical: 2.h),
                       shape: RoundedRectangleBorder(
@@ -129,7 +147,12 @@ Widget build(BuildContext context, WidgetRef ref) {
                   ),
               ],
             ),
-    ),
+    );
+    }, error: (error,stackTrace){
+      return Center(child: Text('Error occured'),);
+    }, loading: (){
+      return Center(child: CircularProgressIndicator(),);
+    }),
     bottomNavigationBar: BottomNavigation(),
   );
 }

@@ -3,8 +3,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
 import 'package:pulse_viz/controllers/modelController.dart';
+import 'package:pulse_viz/controllers/report_provider.dart';
 import 'package:pulse_viz/search_patient.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -53,6 +55,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
       final XFile imageFile = await _cameraController!.takePicture();
       File image = File(imageFile.path);
+      ref.read(imageProvider.state).state = image;
       String result = await modelController.captureAndSendImage(image, ref, context);
 
       setState(() {

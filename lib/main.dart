@@ -12,12 +12,21 @@ import 'package:pulse_viz/add_patient.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+  
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    debugPrint("Firebase initialization error: $e");
+  }
+  
   runApp(ProviderScope(child: MyApp()));
 }
+
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

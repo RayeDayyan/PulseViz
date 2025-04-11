@@ -1,4 +1,4 @@
-import 'package:pulse_viz/helpers/EncryptionHelper.dart'; 
+import 'package:pulse_viz/helpers/EncryptionHelper.dart';
 
 class UserModel {
   final String uid;
@@ -19,27 +19,40 @@ class UserModel {
     required this.password,
   });
 
-  // Decrypt CNIC and Phone when fetching from Firebase
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  // Convert JSON to UserModel (Decrypt Phone)
+  static Future<UserModel> fromJson(Map<String, dynamic> json) async {
     return UserModel(
       uid: json['uid'],
       email: json['email'],
       name: json['name'],
-      cnic: EncryptionHelper.decryptData(json['cnic']), // Decrypt CNIC
-      phone: EncryptionHelper.decryptData(json['phone']), // Decrypt Phone
+      cnic: json['cnic'],
+      phone: await EncryptionHelper.decryptData(json['phone']),
       occupation: json['occupation'],
       password: json['password'],
     );
   }
 
-  // Encrypt CNIC and Phone before saving to Firebase
-  Map<String, dynamic> toJson() {
+  // Convert UserModel to JSON (Pre-encrypt CNIC & Phone)
+  Future<Map<String, dynamic>> toEncryptedJson() async {
     return {
       'uid': uid,
       'email': email,
       'name': name,
-      'cnic': EncryptionHelper.encryptData(cnic), // Encrypt CNIC
-      'phone': EncryptionHelper.encryptData(phone), // Encrypt Phone
+      'cnic': cnic, 
+      'phone': await EncryptionHelper.encryptData(phone),
+      'occupation': occupation,
+      'password': password,
+    };
+  }
+
+  // **New method: Synchronous version of toJson()**
+  Map<String, dynamic> toJsonSync({required String cnic, required String encryptedPhone}) {
+    return {
+      'uid': uid,
+      'email': email,
+      'name': name,
+      'cnic': cnic, 
+      'phone': encryptedPhone,
       'occupation': occupation,
       'password': password,
     };
