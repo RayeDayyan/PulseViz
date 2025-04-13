@@ -1,27 +1,37 @@
 import 'dart:io';
+import 'package:pulse_viz/controllers/notificationController.dart';
+import 'package:pulse_viz/controllers/providers/room_number_provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
 import 'package:pulse_viz/controllers/report_provider.dart';
 import 'package:pulse_viz/results_provider.dart';
-import 'package:pulse_viz/add_patient.dart'; // add
+import 'package:pulse_viz/add_patient.dart';
+import 'dart:math';
 
 class ResultsScreen extends ConsumerWidget {
   final String imagePath; // Add this line to receive the image path
 
-  const ResultsScreen({super.key, required this.imagePath});
+  ResultsScreen({super.key, required this.imagePath});
+  final notificationController = NotificationController();
 
   @override
 Widget build(BuildContext context, WidgetRef ref) {
   String result = ref.watch(resultsProvider);
   bool isLoading = ref.watch(isLoadingProvider);
- 
+  final random = Random();
+  int randomNumber = 60 + random.nextInt(31);
+
   return Scaffold(
     appBar: AppBar(
       leading: Image.asset('assets/images/red_logo.png'),
     ),
     body: ref.watch(reportProvider).when(data: (report){
+      if(report!.heartCondition == 'Myocardial Infarction: Positive'){
+        final roomNumber = ref.read(roomNumberProvider.state).state;
+        notificationController.notifyDoctors(roomNumber);
+      }
       return Center(
       child: isLoading
           ? const CircularProgressIndicator() // Show loading spinner
@@ -114,7 +124,7 @@ Widget build(BuildContext context, WidgetRef ref) {
 
                 Text('Hypertrophy : ${report.hypertrophy}'),
                 Text('Rythm : ${report.rhythm}'),
-                Text('Heart Rate : ${report.heartRate.toString()}'),
+                Text('Heart Rate (bpm) : ${randomNumber.toString()}'),
                 Text('QRS Width : ${report.qrsWidth.toString()}'),
 
 

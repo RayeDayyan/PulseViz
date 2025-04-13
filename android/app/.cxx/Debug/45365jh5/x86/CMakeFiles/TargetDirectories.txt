@@ -1,0 +1,2 @@
+D:/Study Material/SEMESTER-VIII/FYP/Pulse/android/app/.cxx/Debug/45365jh5/x86/CMakeFiles/edit_cache.dir
+D:/Study Material/SEMESTER-VIII/FYP/Pulse/android/app/.cxx/Debug/45365jh5/x86/CMakeFiles/rebuild_cache.dir

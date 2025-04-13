@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:pulse_viz/bottom_navigation.dart';
 import 'package:pulse_viz/controllers/modelController.dart';
+import 'package:pulse_viz/controllers/notificationController.dart';
 import 'package:pulse_viz/controllers/report_provider.dart';
 import 'package:pulse_viz/search_patient.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,11 +24,25 @@ class _CameraScreenState extends State<CameraScreen> {
   late Future<void> _initializeControllerFuture;
   String _scanResult = "";
   final modelController = ModelController();
+  final firebaseMessaging = FirebaseMessaging.instance;
+  final auth = FirebaseAuth.instance;
+  final fireStore = FirebaseFirestore.instance;
+  final notificationController = NotificationController();
 
   @override
   void initState() {
     super.initState();
     _initializeControllerFuture = _initializeCamera();
+    setToken();
+    notificationController.firebaseInit(context);
+  }
+
+  Future<void> setToken() async{
+    String? fcmToken = await firebaseMessaging.getToken();
+    final uid = auth.currentUser!.uid;
+    await fireStore.collection('users').doc(uid).update({
+      'fcmToken':fcmToken
+    });
   }
 
   Future<void> _initializeCamera() async {
@@ -74,6 +92,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

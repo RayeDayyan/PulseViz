@@ -13,8 +13,8 @@ import 'package:pulse_viz/loading_screen.dart';
 class ModelController {
   bool isLoading = false;
   final imagePicker = ImagePicker();
-  final String baseUrl = 'http://13.51.157.252:5000/predict';
-  final String generationURL = 'http://13.51.157.252:5001/analyze';
+  final String baseUrl = 'http://51.21.248.76:5000/predict';
+  final String generationURL = 'http://51.21.248.76:5001/analyze';
   bool? predictionResult;
   String imagePath = '';
 

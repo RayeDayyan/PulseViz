@@ -7,6 +7,7 @@ import 'package:pulse_viz/controllers/modelController.dart';
 import 'package:pulse_viz/login_screen.dart';
 import 'package:pulse_viz/results_provider.dart';
 import 'package:pulse_viz/results_screen.dart';
+import 'package:pulse_viz/settings_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:pulse_viz/loading_screen.dart';
 import 'dart:io';
@@ -43,14 +44,8 @@ class BottomNavigation extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => const LoadingScreen()),
           );
 
-          XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+          result = await modelController.pickAndSendImage(ref, context);
 
-          if (image != null) {
-              imagePath = image.path;
-              File imageFile = File(imagePath);
-              result = await modelController.pickAndSendImage(ref, context);
-
-          }
           ref.read(isLoadingProvider.state).state = false; // Stop Loading
 
           if (result != 'No Image Selected') {
@@ -95,11 +90,10 @@ class BottomNavigation extends ConsumerWidget {
           // Settings Button on Right
           IconButton(
             onPressed: () {
-              auth.signOut();
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const LoginScreen()),
+                    builder: (context) => SettingsScreen()),
               );
             },
             icon: Icon(Icons.settings, color: Colors.white, size: 5.h),

@@ -108,6 +108,7 @@ void signUp() async {
       phone: encryptedPhone, // Encrypted Phone
       occupation: role,
       password: hashedPassword,
+      onDuty: false
     );
 
     final result = await userController.signUpUser(user);

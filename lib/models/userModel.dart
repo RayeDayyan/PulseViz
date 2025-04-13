@@ -8,6 +8,8 @@ class UserModel {
   final String phone;
   final String occupation;
   final String password;
+  final bool onDuty;
+  String? fcmToken;
 
   UserModel({
     required this.uid,
@@ -17,6 +19,8 @@ class UserModel {
     required this.phone,
     required this.occupation,
     required this.password,
+    required this.onDuty,
+    this.fcmToken
   });
 
   // Convert JSON to UserModel (Decrypt Phone)
@@ -29,6 +33,9 @@ class UserModel {
       phone: await EncryptionHelper.decryptData(json['phone']),
       occupation: json['occupation'],
       password: json['password'],
+      onDuty : json['onDuty'] ?? false,
+      fcmToken: json['fcmToken']
+
     );
   }
 
@@ -42,6 +49,7 @@ class UserModel {
       'phone': await EncryptionHelper.encryptData(phone),
       'occupation': occupation,
       'password': password,
+      'onDuty': onDuty
     };
   }
 
@@ -55,6 +63,7 @@ class UserModel {
       'phone': encryptedPhone,
       'occupation': occupation,
       'password': password,
+      'onDuty':onDuty,
     };
   }
 }
