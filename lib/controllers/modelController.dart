@@ -1,22 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:pulse_viz/controllers/report_provider.dart';
-import 'package:pulse_viz/models/report_model.dart';
-import 'package:pulse_viz/results_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
-import 'package:pulse_viz/results_screen.dart';
-import 'package:pulse_viz/loading_screen.dart';
+
+import '../loading_screen.dart';
+import '../models/report_model.dart';
+import '../results_provider.dart';
+import '../results_screen.dart';
 
 class ModelController {
-  bool isLoading = false;
-  final imagePicker = ImagePicker();
-  final String baseUrl = 'http://51.21.248.76:5000/predict';
-  final String generationURL = 'http://51.21.248.76:5001/analyze';
+  final String baseUrl = 'http://13.218.65.220:5001/predict';
+  final String generationURL = 'http://13.218.65.220:5000/analyze';
   bool? predictionResult;
   String imagePath = '';
+  final imagePicker = ImagePicker();
 
   Future<String> pickAndSendImage(WidgetRef ref, BuildContext context) async {
     ref.read(isLoadingProvider.notifier).state = true;
@@ -174,5 +175,6 @@ Future<String> captureAndSendImage(File imageFile, WidgetRef ref, BuildContext c
     print("⚠️ Error in sendImageToApi: $e");
     return null;
   }
+
   }
 }

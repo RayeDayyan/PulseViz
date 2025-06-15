@@ -38,7 +38,7 @@ class LoginScreenState extends State<LoginScreen> {
               ),
             ));
         //change screen after successful login
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const CameraScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const CameraScreen()));
 
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -5,7 +5,7 @@ class UserModel {
   final String email;
   final String name;
   final String cnic;
-  final String phone;
+  String phone;
   final String occupation;
   final String password;
   final bool onDuty;
@@ -30,7 +30,7 @@ class UserModel {
       email: json['email'],
       name: json['name'],
       cnic: json['cnic'],
-      phone: await EncryptionHelper.decryptData(json['phone']),
+      phone: json['phone'],
       occupation: json['occupation'],
       password: json['password'],
       onDuty : json['onDuty'] ?? false,

@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:open_file/open_file.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../helpers/EncryptionHelper.dart';
 
 class AddPatientScreen extends StatefulWidget {
@@ -162,9 +163,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     : ElevatedButton(
                         onPressed: _savePatientData,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: Colors.red,
                           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                          textStyle: TextStyle(fontSize: 18),
+                          textStyle: TextStyle(color:Colors.black,fontSize: 18.sp,),
                         ),
                         child: Text("Save"),
                       ),

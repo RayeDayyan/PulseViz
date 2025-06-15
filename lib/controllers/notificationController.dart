@@ -105,8 +105,8 @@ class NotificationController {
     final serviceAccountJson = {
       "type": "service_account",
       "project_id": "newpulseviz",
-      "private_key_id": "fed1cbd7bc8e10f89106244f80bbbc78706a02ca",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCn+E/KHZq1unxA\nH1o1NEISkr3enQBI42mK7a08GzZdTZifRMurm58d69Lu0+NU92XrPqO0QKH/6wGj\npZBasEh4inX5vSyWMJ3hfDyrpooEjUv1PurSC34iQa3ih7d5zLfecGpTHrL7JzGf\nvnDiFBcP08OC7vRY9q869bQVC2RzBjulqczBU+h9WFH0I/QVGk81J3Iu/8rS9kdj\nVMIIDqoWkr2HrSCuiEeIDte7S0BxSc2WVhuayGLDkcbCHZ+XrPv9DnBNTXRD2QZl\n1kcg/oo8aI2kr98/vp/3vGYWnCoJaQGWfIv/HlKl5HT2Pq4Tu1/BZsbx/Q88GqfV\nbYuj47RbAgMBAAECggEAF50vrnUCAolwnV0rA+7QWScbHVhKKXUbKeZnI9uZhX16\ntu1nir0qnfzA30WXoKLVR8C7KASsIbvqs5R7mlxNG/EvS8heI9E66O/b4a/cmG46\n3wQU5CmsdmlwZjf5QdzXfqSkNgJLXEay0cfmu8niQh3dzyMD5BvuH6ZaRlkfKpJb\n51Oc2ysylhc2M5FPIZAmLylLvX6TYZqVo60FPxa4Ciw6S3gU4FuNtpv16c6zWEGV\nSAhQ0BsXUc9r2I1bpED/ztt+osGnsZY2BUv2LYcnJic9AsCqBaQ1oZPYzQ3TKRho\nHyHNQ2ImEBnDnEcBzYLGO6tZXlQo97y2k9nAQLVwvQKBgQDXxXT8kEQ5r2oDBbOL\ndk5dJymweyvjOl395yh+LKG17tuQVfhAfKUtyz6t+PkUOPyF8zpfZAzRUrPl9DI3\nkhRCb2aQ4z+LxyDlFpURMqeSaCn3YF90iS6+4f4S3JIJjXsG2UQGGFu069J2BY8U\nh9+4YSG3uoZoVh0xWTYiUFWd3QKBgQDHSVhxXc7aRDuD/lwbIW94GKW/2L7jdwf6\nLbPmt7x/4Gk2O5n/bWCeZN4nA8evvi/6qynToAceVD27rxYJmrBMhxqZNSu5ImDB\nlsZNk5yJn79MQsuDFhTdtwYgMBbDZEEwwLIypsXpARSaEH8yDzYBP8zjDAU1zRbk\nPEX30xIDlwKBgH42azLdNHtFp04zRI3cWwRURyeLNOXKm3ZMg7wiYUkpeddY4kje\nYESEMZrUGuaAWv4Dg26O+IxswvxMth8ZXK5ruWQg+WfKx+wZJIMVzT1vnrSr88oY\nAHb5fIQN74KU9pTP++FQ2DvhAY+1urb4r52Le4ycF8jqLlNSar7xnNMlAoGAUUf/\nBK4IMknmJF3YX1Bx0H/tCqRypv/jhwyg9Zc3EMkM4IvKsb2AzNnDKhKGnY1qsEij\nlKcOgDZHv4cX6+7lvTDVjmt7W9VDtXGzi+yKyi8XrRkJPHwDIrMFkpdKkYMQe7v8\ncmBHFFPWfUgBOP+vPS8yd+BtN5ZgodJbj0rNbB0CgYAoLU42fqzXtWCf3e9yX8I1\nWMNRbkATmXs+iakrvVXmoAWZXRo9kLxWCobCAP1buN20TtqwlBIbun6eFzF/kxQY\nXC65SRpOX4ZtBFP7N1u2OT1fCIV0Ut1s/irDbp6e31KLYcxMMM6gmgH2knSdnM1u\n9aVASXS2EFN576GiL5H1Hg==\n-----END PRIVATE KEY-----\n",
+      "private_key_id": "a16f94fbce9286729b71eef43ae9613c816a2e95",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJotDpn7NXKUV3\nOQoIWUxRjWROIzLO+L3EGYfNc2vYifj2zTU/UaEQxxyVDxPUHy9KonznHbcFEpVC\nRn6vkwqk9N+oDX5S++UHszZY0Y4t8PKNWeMAX8+UTTxxrXllrhxDDZbXg7a/DOi5\nVWB7MdL/xVx+DiK6xLsYaR+j3FnAQx5I9nvEtBFvXMhbcUhTZ8r44swccKx3H+VB\nubiye8btDYNo6TLuxJkFEaupyxhUok5370x/qmnBe5WnSVhCSREYLnbQKM2wkw4y\nBydXtJG+2TMgpYk0A3CtLChVy1W6YDtVKHZDwqn2hTGk2vPFIJ3LuAaavZ4PiLgQ\nbDCiSjJzAgMBAAECggEAA/Tj8JGnrUAsEsjVv5AxBTCnFTlvl8wdvSlbFtb6+MbM\nUdt4/gMWDAQ8NViUZQcvoGFL3iUhIEJbF2/WsI9MGCyN7vhE0FANEHedy2RhS9l8\niPWIlMtMgXZ6hyiGR06BU3eCzDvTbDBOqMRaHlC9+TLgO8D/QXb2zOXTLx31zOX7\nWYL0iT/L0Yt3EQEuNMAOjGWnkm8EisXNyzlKBeQVDIUBDRtH9TzHqliLHvCDPYzf\njYC8GObVNKjHrVqEf/lwfj+CdkfO5LRkenN77CuUCZDlgwutymzrNelJdT3hRi8G\nYzHAHiJnqM1YIY+nZswlSfKhrUgl4lyZqBWov8ap8QKBgQDj/5H/HiYhNDAKx0ad\nNEdXlBYPZATF1ThMbx88plIQ/8dd4+6KLWPR1iiwI0LPGfIWR0c0wQ/XbUXwPzQH\nNgWubY2JaHGE5+mxDx+NeMvM8q4qtdUaAOiDIJHvFSHimeRKVDA8yP7vXG/TDZOD\nkobTMVVVxcFps+cWLPq0UDnPbQKBgQDiZmVGEMo9/5jpR60D61Eppg2jntLSxHkz\nffvHdT/RrSn26m/lkQ6VMUHfXGc0g4YyJKfGMxJjc0RPYhKPDw/u3y6FiLUPWblz\nqXs7+uDDxgKbVxGP02luxwdwFv1abg+JDBcEjPmEnRGZu41Rc5Yw56OpSOCATM3S\nUw6VHgZ9XwKBgQDFgWszmSZmtRK5A4+ENvlmQH4rrvUDe4VdkRV6MIn+99P43a6S\nPGewKtjsXF9PkKZJ7k0cwfG7KInhaJ7lcELTq0tksPlFrLCgFP28S9wgGkoN7Z5A\n/HBuxxQkDCZiafV8/hkbTvKo32Zvad9TpubspFvMBZdaveF9MFGtSaIKsQKBgHzw\nszz6cRHL50/93S5Hg6/vUqGUOZZVFOnkwbjuLL0CyiDYec3/wkN1PnwMW2wwlTNA\n5VHMx34Yk38XiVRnpIxXoC3TJtCE3IJG6ppMNhP0R2YAo9Fyg0G+Fo22MjTgfjRM\ndrttLRoRMDBdv3xOxHjSrI/0huhm+kLy0R5bxosTAoGAAje8AWnd3Zb/iijCiw9r\nAGgcnkHYD5kPhXukdk7WK2vXp1Aq99A39R/09fog+VBqUidy1kiEJt95gJQorbFw\n1gkL9BMT9+psaS/t+fTX6R4CelhQ00oojb088bxFvY4SGv0o3YqDlHDoOV+0YNfG\nZK5vUSPulakWnTCPE6TmDhg=\n-----END PRIVATE KEY-----\n",
       "client_email": "firebase-adminsdk-fbsvc@newpulseviz.iam.gserviceaccount.com",
       "client_id": "117665353121754922235",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -146,7 +146,6 @@ class NotificationController {
       final result = await fireStore.collection('users').where('onDuty',isEqualTo: true).get();
 
 
-      //final recToken = 'ddiCjn_fSl6GEkKFjl5qhQ:APA91bHy1DACxT0CKGPSS96d1pNO-QzRbLf07WdwtOK_Rw_AMWOvrF1t0AABwbviY4k56uvHb-yl48QErtjWi19IQkGMhxgV0b--HqnKAyWVGNYHMUT31FY';
 
 
       for(var doc in result.docs){
@@ -179,7 +178,7 @@ class NotificationController {
 
 
     } catch (e) {
-      print('error occured notifying');
+      print('error occured notifying $e');
     }
   }
 

@@ -7,6 +7,8 @@ import 'package:pulse_viz/controllers/notificationController.dart';
 import 'package:pulse_viz/controllers/providers/current_user_details.dart';
 import 'package:pulse_viz/controllers/providers/room_number_provider.dart';
 import 'package:pulse_viz/controllers/userController.dart';
+import 'package:pulse_viz/edit_profile_screen.dart';
+import 'package:pulse_viz/helpers/EncryptionHelper.dart';
 import 'package:pulse_viz/login_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,23 +32,52 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
   Widget build(BuildContext context){
     final roomNumber = ref.read(roomNumberProvider.state).state;
     roomNumberController.text = roomNumber.toString();
-
     return Scaffold(
       appBar: AppBar(
         leading: Image.asset('assets/images/red_logo.png'),
+        actions: [
+          IconButton(onPressed: (){
+            auth.signOut();
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
+          }, icon: Icon(Icons.logout,size: 4.h,color: Colors.black,))
+        ],
       ),
       body: ref.watch(currentUserDetails).when(data: (user){
+        if(user==null){
+          return TextButton(
+              onPressed: (){
+                auth.signOut();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                ref.refresh(currentUserDetails);
+
+
+              },
+              child: Text(
+              'Please login again',));
+
+        }
+
+        print(user.email);
+        print(user.occupation);
         return user!.occupation == 'Nurse' ? ListView(
           padding: EdgeInsets.all(3.w),
           children: [
-            SizedBox(height: 15.h),
             Row(
               children: [
                 Text('Room Number : ',style: TextStyle(fontSize: 18.sp),),
                 Expanded(child: TextField(
                   controller: roomNumberController,
-                  style: TextStyle(fontSize: 18.sp),
-                )),
+                  style: const TextStyle(
+                    fontFamily: 'Poppins-Light',
+                  ),
+                  decoration: InputDecoration(
+                      hintText: 'Contact',
+                      hintStyle:
+                      TextStyle(fontFamily: 'Poppins-Light', fontSize: 14.sp),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      )),
+                ),),
               ],
             ),
 
@@ -57,36 +88,53 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
                   ref.read(roomNumberProvider.state).state = int.parse(roomNumberController.text.toString());
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red
+                  backgroundColor: Color(0xFFD61717)
                 ),
                 child: Text('Save',style: TextStyle(
                   fontSize: 18.sp,
                   color: Colors.white
                 ),)),
 
-              SizedBox(height: 30.h,),
+              SizedBox(height: 3.h),
+                  Text('Name : ${user.name}',style: TextStyle(
+                    fontSize: 18.sp,
 
-              ElevatedButton(onPressed: (){
-                auth.signOut();
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-              },
+                  ),),
+                  Text('CNIC : ${user.cnic}',style: TextStyle(
+                    fontSize: 18.sp,
+
+                  ),),
+
+                  Text('Email : ${user.email}',style: TextStyle(
+                    fontSize: 18.sp,
+
+                  ),),
+
+            Text('Occupation : ${user.occupation}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
+            Text('Contact : ${user.phone}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
+            SizedBox(height: 30.h,),
+            
+            ElevatedButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> EditProfileScreen()));
+            },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFD61717)
+                  backgroundColor: Color(0xFFD61717)
                 ),
-                child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.logout,color: Colors.white,size: 3.h,),
-                        SizedBox(width:2.w,),
-                        Text('Sign out',style: TextStyle(fontSize: 18.sp,color: Colors.white),)
-                      ],
-                    ),
-                  )
+                child: Text('Edit Profile',style: TextStyle(fontSize: 18.sp,color: Colors.white),)),
+
           ],
         ) : ListView(
           padding: EdgeInsets.all(3.w),
           children: [
-            SizedBox(height: 15.h),
+            SizedBox(height: 7.h),
             Text('On Duty', style: TextStyle(fontSize: 18.sp,fontFamily: 'Poppins'),),
             SizedBox(height: 1.h,),
 
@@ -104,7 +152,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
                       onTap: () {
                         setState(() {
                           onDuty = true;
-                          userController.updateDutyStatus(onDuty);
+                          userController.updateDutyStatus(onDuty,context);
                         });
                       },
                       child: Container(
@@ -130,7 +178,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
                       onTap: () {
                         setState(() {
                           onDuty = false;
-                          userController.updateDutyStatus(onDuty);
+                          userController.updateDutyStatus(onDuty,context);
                         });
                       },
                       child: Container(
@@ -153,24 +201,43 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
               ),
             ),
 
+            SizedBox(height: 3.h),
+            Text('Name : ${user.name}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+            Text('CNIC : ${user.cnic}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
+            Text('Email : ${user.email}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
+            Text('Occupation : ${user.occupation}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
+            Text('Contact : ${user.phone}',style: TextStyle(
+              fontSize: 18.sp,
+
+            ),),
+
             SizedBox(height: 30.h,),
 
             ElevatedButton(onPressed: (){
-              auth.signOut();
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> EditProfileScreen()));
             },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFD61717)
-              ),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.logout,color: Colors.white,size: 3.h,),
-                  SizedBox(width:2.w,),
-                  Text('Sign out',style: TextStyle(fontSize: 18.sp,color: Colors.white),)
-                ],
-              ),
-            )
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFD61717)
+                ),
+                child: Text('Edit Profile',style: TextStyle(fontSize: 18.sp,color: Colors.white),)),
+
+
+
           ],
         );
       }, error: (error,stackTrace){
