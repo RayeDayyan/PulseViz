@@ -172,7 +172,7 @@ class NotificationController {
         } else {
           print(response.body);
           print('error occured notifying');
-        };
+        }
 
       }
 

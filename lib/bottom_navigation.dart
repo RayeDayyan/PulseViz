@@ -4,13 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pulse_viz/camera_screen.dart';
 import 'package:pulse_viz/controllers/modelController.dart';
-import 'package:pulse_viz/login_screen.dart';
 import 'package:pulse_viz/results_provider.dart';
 import 'package:pulse_viz/results_screen.dart';
 import 'package:pulse_viz/settings_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:pulse_viz/loading_screen.dart';
-import 'dart:io';
 
 
 class BottomNavigation extends ConsumerWidget {

@@ -14,6 +14,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget{
+  const SettingsScreen({super.key});
+
   @override
   ConsumerState<SettingsScreen> createState() => SettingsScreenState();
 }
@@ -59,7 +61,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen>{
 
         print(user.email);
         print(user.occupation);
-        return user!.occupation == 'Nurse' ? ListView(
+        return user.occupation == 'Nurse' ? ListView(
           padding: EdgeInsets.all(3.w),
           children: [
             Row(

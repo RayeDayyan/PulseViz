@@ -7,6 +7,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:open_file/open_file.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../helpers/EncryptionHelper.dart';
+import '../controllers/patientController.dart';
+import '../models/patientReport.dart';
 
 class AddPatientScreen extends StatefulWidget {
   final String imagePath;
@@ -87,37 +89,57 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     }
   }
 
-  void _savePatientData() async {
-    if (_nameController.text.isEmpty || _cnicController.text.isEmpty || _phoneController.text.isEmpty || _ageController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("All fields are required!")),
-      );
-      return;
-    }
-
-    setState(() => _isSaving = true);
-
-    try {
-      String encryptedName = await EncryptionHelper.encryptData(_nameController.text.trim());
-      String encryptedPhone = await EncryptionHelper.encryptData(_phoneController.text.trim());
-      String encryptedAge = await EncryptionHelper.encryptData(_ageController.text.trim());
-
-      await FirebaseFirestore.instance.collection("Patients").add({
-        "name": encryptedName,
-        "cnic": _cnicController.text.trim(), // CNIC stored in plain text
-        "phone": encryptedPhone,
-        "age": encryptedAge,
-        "createdAt": DateTime.now(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Patient Data Saved Successfully")));
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
-    } finally {
-      setState(() => _isSaving = false);
-    }
+void _savePatientData() async {
+  if (_nameController.text.isEmpty ||
+      _cnicController.text.isEmpty ||
+      _phoneController.text.isEmpty ||
+      _ageController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("All fields are required!")),
+    );
+    return;
   }
+
+  setState(() => _isSaving = true);
+
+  try {
+    String encryptedName = await EncryptionHelper.encryptData(_nameController.text.trim());
+    String encryptedPhone = await EncryptionHelper.encryptData(_phoneController.text.trim());
+    String encryptedAge = await EncryptionHelper.encryptData(_ageController.text.trim());
+
+    String cnic = _cnicController.text.trim();
+
+    // ✅ Save using CNIC as the document ID
+    await FirebaseFirestore.instance.collection("Patients").doc(cnic).set({
+      "name": encryptedName,
+      "cnic": cnic,
+      "phone": encryptedPhone,
+      "age": encryptedAge,
+      "createdAt": DateTime.now(),
+    });
+
+    // ✅ Save ECG report using service class
+    await DatabaseService().addPatientReport(
+    PatientReport(
+      name: _nameController.text.trim(),
+      cnic: cnic,
+      phone: _phoneController.text.trim(),
+      age: int.parse(_ageController.text.trim()),
+      ecgResult: widget.result,
+      ecgImageUrl: widget.imagePath,
+      createdAt: DateTime.now(),
+    ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Patient Data Saved Successfully")));
+    Navigator.pop(context);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+  } finally {
+    setState(() => _isSaving = false);
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -9,6 +9,8 @@ import 'package:pulse_viz/login_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget{
+  const EditProfileScreen({super.key});
+
   @override
   ConsumerState<EditProfileScreen> createState() => EditProfileScreenState();
 }
@@ -91,7 +93,7 @@ class EditProfileScreenState extends ConsumerState<EditProfileScreen>{
               ),
               SizedBox(height: 10.h,),
 
-              Container(
+              SizedBox(
                 height: 8.h,
                 child: ElevatedButton(onPressed: () async{
                   final userController = UserController();

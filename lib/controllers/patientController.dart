@@ -29,41 +29,47 @@ class DatabaseService {
   }
 
   // ✅ Function to fetch all reports for a specific CNIC
-  Future<List<PatientReport>> getPatientReportsByCNIC(String cnic) async {
-    QuerySnapshot reportSnapshots =
-        await patientCollection.doc(cnic).collection("reports").get();
+Future<List<PatientReport>> getPatientReportsByCNIC(String cnic) async {
+  final patientDoc = await patientCollection.doc(cnic).get();
+  print("📄 patientDoc.exists=${patientDoc.exists}");
+  
+  final snap = await patientCollection.doc(cnic).collection('reports').get();
+  print("📊 Found ${snap.docs.length} reports for CNIC=$cnic");
+  
+  if (!patientDoc.exists || snap.docs.isEmpty) return [];
 
-    return reportSnapshots.docs.map((doc) {
-      return PatientReport(
-        name: "", // Name isn't stored in reports, it's in the main document
-        cnic: cnic,
-        phone: "", // Not needed for each report
-        age: 0, // Not needed for each report
-        ecgResult: doc['ecgResult'],
-        ecgImageUrl: doc['ecgImageUrl'],
-        createdAt: (doc['createdAt'] as Timestamp).toDate(),
-      );
-    }).toList();
-  }
+  final patientData = patientDoc.data() as Map<String, dynamic>;
+  final name = patientData['name'] ?? '';
+  final phone = patientData['phone'] ?? '';
+  final age = int.tryParse(patientData['age'].toString()) ?? 0;
+
+  // Get all reports for this patient
+  QuerySnapshot reportSnapshots = await patientCollection
+      .doc(cnic)
+      .collection("reports")
+      .orderBy("createdAt", descending: true)
+      .get();
+
+  return reportSnapshots.docs.map((doc) {
+    return PatientReport(
+      name: name,
+      cnic: cnic,
+      phone: phone,
+      age: age,
+      ecgResult: doc['ecgResult'],
+      ecgImageUrl: doc['ecgImageUrl'],
+      createdAt: (doc['createdAt'] as Timestamp).toDate(),
+    );
+  }).toList();
+}
+
 
 Future<bool> checkIfCnicExists(String cnic) async {
-  var patientCollection = FirebaseFirestore.instance.collection("patients");
-
-  print("🔍 Checking CNIC: $cnic");
-
-  // Fetch all patient records
-  var snapshot = await patientCollection.get();
-
-  // Debug: Print all stored CNICs
-  for (var doc in snapshot.docs) {
-    print("🗂️ Stored CNIC: ${doc.id}"); // Print each CNIC stored in Firestore
-  }
-
-  // Check if the CNIC exists
-  bool exists = snapshot.docs.any((doc) => doc.id == cnic);
-  
-  print("🔍 CNIC Exists: $exists");
-  return exists;
+  final doc = await patientCollection.doc(cnic).get();
+  print("🔍 checkIfCnicExists: doc.exists=${doc.exists} (CNIC=$cnic)");
+  return doc.exists;
 }
+
+
 
 }
